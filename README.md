@@ -69,6 +69,15 @@ npm install
 npm run dev
 ```
 
+5. Deploy latest version after changes
+```bash
+npm run build
+```
+
+```bash
+firebase deploy
+```
+
 ## API Integration
 The application integrates with the REST Countries API through:
 - Centralized service layer for API calls
