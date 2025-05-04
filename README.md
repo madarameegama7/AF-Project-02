@@ -74,10 +74,10 @@ The application integrates with the REST Countries API through:
 - Centralized service layer for API calls
 - Type-safe responses using TypeScript interfaces
   <ul>
-▪ GET /all – to get a list of all countries. 
-▪ GET /name/{name} – to search a country by its name. 
-▪ GET /region/{region} – to get countries from a specific region. 
-▪ GET /alpha/{code} – to get full details using a country code. 
+▪ GET /all – to get a list of all countries.<br> 
+▪ GET /name/{name} – to search a country by its name.<br>
+▪ GET /region/{region} – to get countries from a specific region. <br>
+▪ GET /alpha/{code} – to get full details using a country code.<br> 
   </ul>
 
 ## Session Management
