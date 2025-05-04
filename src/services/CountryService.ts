@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { Country } from '@app_interfaces/Country';
-import { API_URL } from '../api/ApiURL';
 
 export const fetchAllCountries=async(): Promise<Country[]>=>{
     try{
-        const response = await axios.get<Country[]>(`${API_URL}/all`);
+        const response = await axios.get<Country[]>(`https://restcountries.com/v3.1/all`);
         return response.data;
     }catch(error){
         console.error('Error fetching all countries', error);
@@ -14,7 +13,7 @@ export const fetchAllCountries=async(): Promise<Country[]>=>{
 
 export const fetchCountryByName = async(name:string): Promise<Country[]>=>{
     try{
-        const response = await axios.get<Country[]>(`${API_URL}/name/${name}`);
+        const response = await axios.get<Country[]>(`https://restcountries.com/v3.1/name/${name}`);
         return response.data;
     }catch(error){
         console.error(`Error fetching country by name (${name}):`,error);
@@ -25,7 +24,7 @@ export const fetchCountryByName = async(name:string): Promise<Country[]>=>{
 
 export const fetchAllCountriesByRegion = async(region:string): Promise<Country[]>=>{
     try{
-        const response = await axios.get<Country[]>(`${API_URL}/region/${region}`);
+        const response = await axios.get<Country[]>(`https://restcountries.com/v3.1/region/${region}`);
         return response.data;
 
     }catch(error){
@@ -36,7 +35,7 @@ export const fetchAllCountriesByRegion = async(region:string): Promise<Country[]
 
 export const fetchCountryByCode = async (code:string): Promise<Country[]>=>{
     try{
-        const response = await axios.get<Country[]>(`${API_URL}/code/${code}`);
+        const response = await axios.get<Country[]>(`https://restcountries.com/v3.1/alpha/${code}`);
         return response.data;
 
     }catch(error){

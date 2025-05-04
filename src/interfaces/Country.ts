@@ -14,5 +14,12 @@ export interface Country{
     languages?: {
         [key: string]: string
     };
+    borders?: string[];
+    currencies?: {
+      [key: string]: {
+        name: string;
+        symbol: string;
+      };
+    };
 
 }

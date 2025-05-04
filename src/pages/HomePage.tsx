@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -14,15 +13,19 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import { Country } from '../interfaces/Country';
+import { fetchAllCountries, fetchCountryByName, fetchAllCountriesByRegion,fetchCountryByCode } from "../services/CountryService";
 
 const HomePage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [countries, setCountries] = useState<any[]>([]);
-  const [filteredCountries, setFilteredCountries] = useState<any[]>([]);
+  const [filteredCountries, setFilteredCountries] = useState<Country[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -36,10 +39,20 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const handleCountryClick = (country: any) => {
-    setSelectedCountry(country);
+const handleCountryClick = async (country: Country) => {
+  setIsLoading(true);
+  try {
+    const [countryData] = await fetchCountryByCode(country.cca3);
+    setSelectedCountry(countryData);
     setIsModalOpen(true);
-  };
+    setError(null);
+  } catch (error) {
+    console.error(`Error fetching country details:`, error);
+    setError("Failed to load country details");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -58,31 +71,60 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get("https://restcountries.com/v3.1/all");
-        setCountries(response.data);
-        setFilteredCountries(response.data);
+        const data = await fetchAllCountries();
+        setCountries(data);
+        setFilteredCountries(data);
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
     };
-
+  
     fetchCountries();
   }, []);
+  
 
-  const handleSearch = (query: string) => {
+  const handleSearch = async (query: string) => {
     setSearchQuery(query);
-    const results = countries.filter((country) =>
-      country.name.common.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredCountries(results);
+    setIsLoading(true);
+  
+    try {
+      if (!query.trim()) {
+        const data = await fetchAllCountries();
+        setFilteredCountries(data);
+      } else {
+        const data = await fetchCountryByName(query);
+        setFilteredCountries(data);
+      }
+      setError(null);
+    } catch (error) {
+      console.error("Error searching countries:", error);
+      setError(`No countries found matching "${query}"`);
+      setFilteredCountries([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleFilter = (region: string) => {
+  const handleFilter = async (region: string) => {
     setRegionFilter(region);
-    const results = region
-      ? countries.filter((country) => country.region === region)
-      : countries;
-    setFilteredCountries(results);
+    setIsLoading(true);
+  
+    try {
+      if (!region) {
+        const data = await fetchAllCountries();
+        setFilteredCountries(data);
+      } else {
+        const data = await fetchAllCountriesByRegion(region);
+        setFilteredCountries(data);
+      }
+      setError(null);
+    } catch (error) {
+      console.error(`Error filtering countries by region (${region}):`, error);
+      setError(`Failed to fetch countries in ${region}`);
+      setFilteredCountries([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -114,7 +156,7 @@ const HomePage: React.FC = () => {
             </Button>
           </div>
 
-          <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}!</h1>
+          <h1 className="text-2xl font-bold mb-4">Welcome</h1>
 
           {/* Search and Filter Container */}
           <div style={{

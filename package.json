@@ -8,9 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@codemirror)/\"",
+    "test:coverage": "react-scripts test --coverage --watchAll=false"
   },
   "jest": {
     "collectCoverageFrom": [
