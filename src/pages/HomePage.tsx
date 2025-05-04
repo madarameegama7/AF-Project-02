@@ -156,7 +156,7 @@ const handleCountryClick = async (country: Country) => {
             </Button>
           </div>
 
-          <h1 className="text-2xl font-bold mb-4">Welcome</h1>
+          <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}!</h1>
 
           {/* Search and Filter Container */}
           <div style={{
